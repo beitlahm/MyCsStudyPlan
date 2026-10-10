@@ -2282,6 +2282,7 @@ body[data-not-sent] > #vis-container ~ #not-sent {
   <div style="background:var(--surface-2);border-radius:var(--radius);padding:8px 12px"><div style="font-size:12px;color:var(--text-secondary)">University credits</div><div style="font-size:20px;font-weight:500"><span id="v5">0</span> / <span id="vu">0</span></div></div>
   <div style="background:var(--surface-2);border-radius:var(--radius);padding:8px 12px"><div style="font-size:12px;color:var(--text-secondary)">Courses done</div><div style="font-size:20px;font-weight:500"><span id="v4">0</span> / <span id="vn">0</span></div></div>
   <div style="background:var(--surface-2);border-radius:var(--radius);padding:8px 12px"><div style="font-size:12px;color:var(--text-secondary)">Available now</div><div style="font-size:20px;font-weight:500"><span id="v3">0</span></div></div>
+  <div style="background:var(--surface-2);border-radius:var(--radius);padding:8px 12px;border:1.5px solid var(--border-accent)"><div style="font-size:12px;color:var(--text-accent);font-weight:500">Total credits</div><div style="font-size:20px;font-weight:600;color:var(--text-accent)"><span id="vtc">0</span> / <span id="vtt">0</span></div></div>
 </div>
 <div id="info" style="font-size:13px;color:var(--text-secondary);min-height:40px;margin:0 0 8px"></div>
 <div style="overflow-x:auto;border:0.5px solid var(--border);border-radius:12px;padding:8px">
@@ -2371,7 +2372,8 @@ const real=Object.values(N).filter(n=>!n.ext);
 const coreTot=real.filter(n=>!n.el&&!n.uni).reduce((s,n)=>s+n.cr,0);
 const uniComp=real.filter(n=>n.uni&&!n.el);const uniTot=uniComp.reduce((s,n)=>s+n.cr,0)+9;
 const slots=real.filter(n=>!n.el&&!n.uni).length+LIM.maj+uniComp.length+3;
-$('vt').textContent=coreTot;$('vu').textContent=uniTot;$('vn').textContent=slots;
+const totalPossible=coreTot+uniTot+LIM.maj*3;
+$('vt').textContent=coreTot;$('vu').textContent=uniTot;$('vn').textContent=slots;$('vtt').textContent=totalPossible;
 const gdone=g=>[...done].filter(i=>N[i].grp===g);
 const canPick=n=>!n.grp||done.has(n.id)||gdone(n.grp).length<LIM[n.grp];
 function sums(){let c=0,u=0,k=0,m=0;done.forEach(i=>{const n=N[i];if(n.ext)return;k++;if(n.uni)u+=n.cr;else if(n.grp==='maj')m++;else if(!n.el)c+=n.cr});return{c,u,k,m}}
@@ -2407,7 +2409,7 @@ else if(mode==='t'){if(done.has(o.a)&&done.has(o.b)){col='#639922';w=1.4;op=1}el
 op*=Math.min(fo[o.a],fo[o.b]);
 o.e.style.stroke=col||'var(--border-strong)';o.e.style.strokeWidth=w;o.e.style.opacity=op;o.e.style.strokeDasharray=dsh});
 const d=$('info');
-if(mode==='t'){$('v1').textContent=S.c;$('v2').textContent=S.m;$('v3').textContent=av;$('v4').textContent=S.k;$('v5').textContent=S.u;
+if(mode==='t'){$('v1').textContent=S.c;$('v2').textContent=S.m;$('v3').textContent=av;$('v4').textContent=S.k;$('v5').textContent=S.u;const earned=S.c+S.u+S.m*3;$('vtc').textContent=earned;
 d.textContent=warn||'Click a course to mark it done; its prerequisites are marked too. Click a done course to undo it and everything after it. Limits: 3 major electives, 1 from University Elective 1, 1 from University Elective 2, and 1 "Any 3hr course".'}
 else if(sel){const n=N[sel];const part=[...B].filter(i=>!full.has(i));const front=part.filter(i=>N[i].pre.some(p=>dd.has(p)));
 let t=n.name+' ('+sel+')'+(n.el?', elective':'')+': needs '+A.size+' course'+(A.size===1?'':'s')+' first. Fully unlocks '+full.size+' course'+(full.size===1?'':'s')+(part.length?', and '+part.length+' more only partly.':'.');
@@ -2422,3 +2424,4 @@ svg.addEventListener('click',()=>{sel=null;render()});
 setMode('x');
 </script></div>
 </body></html>
+
